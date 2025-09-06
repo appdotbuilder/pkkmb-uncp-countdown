@@ -23,6 +23,7 @@ Route::get('/', function () {
 // Countdown routes
 Route::controller(CountdownController::class)->group(function () {
     Route::get('/countdown', 'index')->name('countdown.index');
+    Route::get('/countdown/setup', 'create')->name('countdown.setup');
     Route::post('/countdown', 'store')->name('countdown.store');
     Route::patch('/countdown/{session}', 'update')->name('countdown.update');
 });

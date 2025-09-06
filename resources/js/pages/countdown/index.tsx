@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Clock, User, Settings, Archive, Play, Pause } from 'lucide-react';
+import { Clock, User, Settings, Archive, Pause, Plus } from 'lucide-react';
 
 interface CountdownSession {
     id: number;
@@ -33,8 +30,6 @@ interface Props {
 }
 
 export default function CountdownIndex({ activeSession, appSettings }: Props) {
-    const [participantName, setParticipantName] = useState('');
-    const [durationMinutes, setDurationMinutes] = useState('5');
     const [timeLeft, setTimeLeft] = useState(0);
     const [overtime, setOvertime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
@@ -78,18 +73,6 @@ export default function CountdownIndex({ activeSession, appSettings }: Props) {
         }
     }, [activeSession]);
 
-    const handleStart = () => {
-        if (!participantName.trim() || !durationMinutes) return;
-        
-        router.post('/countdown', {
-            participant_name: participantName.trim(),
-            duration_minutes: parseInt(durationMinutes),
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
-    };
-
     const handleStop = () => {
         if (!activeSession) return;
         
@@ -100,9 +83,6 @@ export default function CountdownIndex({ activeSession, appSettings }: Props) {
             preserveState: true,
             preserveScroll: true,
         });
-        
-        setParticipantName('');
-        setDurationMinutes('5');
     };
 
     const formatTime = (seconds: number) => {
@@ -120,6 +100,19 @@ export default function CountdownIndex({ activeSession, appSettings }: Props) {
         if (isOvertime) return 'text-red-600';
         if (timeLeft <= 60) return 'text-yellow-600';
         return 'text-green-600';
+    };
+
+    const getProgressPercentage = () => {
+        if (!activeSession || isOvertime) return 0;
+        const totalSeconds = activeSession.duration_minutes * 60;
+        return (timeLeft / totalSeconds) * 100;
+    };
+
+    const getProgressColor = () => {
+        const progress = getProgressPercentage();
+        if (progress > 50) return 'bg-green-500';
+        if (progress > 20) return 'bg-yellow-500';
+        return 'bg-red-500';
     };
 
     return (
@@ -162,163 +155,140 @@ export default function CountdownIndex({ activeSession, appSettings }: Props) {
             </div>
 
             <div className="container mx-auto px-4 py-8">
-                <div className="grid lg:grid-cols-2 gap-8">
+                <div className="max-w-4xl mx-auto">
                     {/* Timer Display */}
-                    <div className="space-y-6">
-                        <Card className="border-2 border-yellow-200">
-                            <CardHeader className="text-center">
-                                <CardTitle className="text-2xl text-gray-800">
-                                    {isRunning ? '⏱️ Timer Aktif' : '🕐 Timer Countdown'}
-                                </CardTitle>
-                                {activeSession && (
-                                    <div className="flex items-center justify-center space-x-2">
-                                        <User className="w-4 h-4 text-gray-600" />
-                                        <span className="font-medium text-gray-700">{activeSession.participant_name}</span>
+                    <Card className="border-2 border-yellow-200 shadow-lg mb-6">
+                        <CardHeader className="text-center">
+                            <CardTitle className="text-3xl text-gray-800">
+                                {isRunning ? '⏱️ Timer Aktif' : '🕐 Timer Countdown'}
+                            </CardTitle>
+                            {activeSession && (
+                                <div className="flex items-center justify-center space-x-2 mt-2">
+                                    <User className="w-5 h-5 text-gray-600" />
+                                    <span className="font-medium text-gray-700 text-xl">{activeSession.participant_name}</span>
+                                </div>
+                            )}
+                        </CardHeader>
+                        <CardContent className="text-center space-y-8">
+                            {isRunning ? (
+                                <>
+                                    {/* Main Timer Display */}
+                                    <div className={`text-8xl font-mono font-bold transition-all duration-300 ${getTimerColor()}`}>
+                                        {isOvertime ? formatTime(0) : formatTime(timeLeft)}
                                     </div>
-                                )}
-                            </CardHeader>
-                            <CardContent className="text-center space-y-6">
-                                {isRunning ? (
-                                    <>
-                                        <div className={`text-8xl font-mono font-bold ${getTimerColor()} transition-colors duration-300`}>
-                                            {isOvertime ? formatTime(0) : formatTime(timeLeft)}
-                                        </div>
-                                        
-                                        {isOvertime && (
-                                            <div className="bg-red-100 border border-red-300 rounded-lg p-4">
-                                                <div className="text-red-800 font-bold text-xl mb-2">
-                                                    🚫 WAKTU HABIS!
-                                                </div>
-                                                <div className="text-red-700">
-                                                    Kelebihan waktu: <span className="font-semibold">{formatTime(overtime)}</span>
-                                                </div>
+                                    
+                                    {/* Progress Bar */}
+                                    {!isOvertime && activeSession && (
+                                        <div className="w-full max-w-2xl mx-auto">
+                                            <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+                                                <div 
+                                                    className={`h-full rounded-full transition-all duration-300 ${getProgressColor()}`}
+                                                    style={{ width: `${getProgressPercentage()}%` }}
+                                                />
                                             </div>
-                                        )}
-                                        
-                                        <div className="flex justify-center space-x-4">
-                                            <Badge 
-                                                variant={isOvertime ? "destructive" : timeLeft <= 60 ? "secondary" : "default"}
-                                                className="text-lg px-4 py-2"
-                                            >
-                                                {isOvertime ? 'OVERTIME' : timeLeft <= 60 ? 'HAMPIR HABIS' : 'BERJALAN'}
-                                            </Badge>
+                                            <div className="mt-2 text-sm text-gray-600">
+                                                Sisa waktu: {Math.round(getProgressPercentage())}%
+                                            </div>
                                         </div>
-                                        
-                                        <Button 
-                                            onClick={handleStop} 
-                                            className="bg-red-500 hover:bg-red-600 text-white text-lg px-8 py-3"
-                                            size="lg"
+                                    )}
+                                    
+                                    {/* Overtime Warning */}
+                                    {isOvertime && (
+                                        <div className="bg-red-100 border border-red-300 rounded-lg p-6 max-w-md mx-auto">
+                                            <div className="text-red-800 font-bold text-2xl mb-3">
+                                                🚫 WAKTU HABIS!
+                                            </div>
+                                            <div className="text-red-700 text-lg">
+                                                Kelebihan waktu: <span className="font-semibold">{formatTime(overtime)}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {/* Status Badge */}
+                                    <div className="flex justify-center space-x-4">
+                                        <Badge 
+                                            variant={isOvertime ? "destructive" : timeLeft <= 60 ? "secondary" : "default"}
+                                            className="text-xl px-6 py-3"
                                         >
-                                            <Pause className="w-5 h-5 mr-2" />
-                                            Hentikan Timer
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <div className="text-gray-500 py-12">
-                                        <Clock className="w-24 h-24 mx-auto mb-4 opacity-30" />
-                                        <p className="text-xl">Siap untuk memulai countdown!</p>
-                                        <p className="text-sm mt-2">Isi formulir di sebelah untuk memulai</p>
+                                            {isOvertime ? 'OVERTIME' : timeLeft <= 60 ? 'HAMPIR HABIS' : 'BERJALAN'}
+                                        </Badge>
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Setup Form */}
-                    <div className="space-y-6">
-                        <Card className="border-2 border-green-200">
-                            <CardHeader>
-                                <CardTitle className="flex items-center space-x-2">
-                                    <Settings className="w-5 h-5 text-green-600" />
-                                    <span>Pengaturan Countdown</span>
-                                </CardTitle>
-                                <CardDescription>
-                                    Atur nama peserta dan durasi waktu presentasi
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="participant" className="text-sm font-medium">
-                                        👤 Nama Peserta
-                                    </Label>
-                                    <Input
-                                        id="participant"
-                                        type="text"
-                                        placeholder="Masukkan nama peserta..."
-                                        value={participantName}
-                                        onChange={(e) => setParticipantName(e.target.value)}
-                                        disabled={isRunning}
-                                        className="text-lg"
-                                    />
-                                </div>
-                                
-                                <div className="space-y-2">
-                                    <Label htmlFor="duration" className="text-sm font-medium">
-                                        ⏰ Durasi (dalam menit)
-                                    </Label>
-                                    <Input
-                                        id="duration"
-                                        type="number"
-                                        min="1"
-                                        max="60"
-                                        placeholder="5"
-                                        value={durationMinutes}
-                                        onChange={(e) => setDurationMinutes(e.target.value)}
-                                        disabled={isRunning}
-                                        className="text-lg"
-                                    />
-                                    <p className="text-xs text-gray-500">
-                                        Rentang: 1-60 menit
-                                    </p>
-                                </div>
-                                
-                                <Separator />
-                                
-                                <Button 
-                                    onClick={handleStart}
-                                    disabled={!participantName.trim() || !durationMinutes || isRunning}
-                                    className="w-full bg-green-500 hover:bg-green-600 text-white text-lg py-6"
-                                    size="lg"
-                                >
-                                    <Play className="w-5 h-5 mr-2" />
-                                    Mulai Countdown
-                                </Button>
-                                
-                                {isRunning && (
-                                    <div className="text-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-                                        💡 Timer sedang berjalan. Hentikan timer untuk memulai sesi baru.
+                                    
+                                    {/* Stop Button */}
+                                    <Button 
+                                        onClick={handleStop} 
+                                        className="bg-red-500 hover:bg-red-600 text-white text-xl px-10 py-4"
+                                        size="lg"
+                                    >
+                                        <Pause className="w-6 h-6 mr-3" />
+                                        Hentikan Timer
+                                    </Button>
+                                </>
+                            ) : (
+                                /* No Active Session */
+                                <>
+                                    <div className="text-gray-500 py-16">
+                                        <Clock className="w-32 h-32 mx-auto mb-6 opacity-30" />
+                                        <p className="text-2xl font-medium mb-2">Tidak ada countdown aktif</p>
+                                        <p className="text-lg">Mulai sesi baru untuk memulai timer</p>
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                                    
+                                    <Button 
+                                        onClick={() => router.get('/countdown/setup')}
+                                        className="bg-green-500 hover:bg-green-600 text-white text-xl px-10 py-4"
+                                        size="lg"
+                                    >
+                                        <Plus className="w-6 h-6 mr-3" />
+                                        Mulai Countdown Baru
+                                    </Button>
+                                </>
+                            )}
+                        </CardContent>
+                    </Card>
 
-                        {/* Quick Actions */}
-                        <Card className="border border-gray-200">
-                            <CardHeader>
-                                <CardTitle className="text-lg">🚀 Aksi Cepat</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    className="w-full justify-start"
-                                    onClick={() => router.get('/archive')}
-                                >
-                                    <Archive className="w-4 h-4 mr-2" />
-                                    Lihat Riwayat Sesi
-                                </Button>
-                                <Button 
-                                    variant="outline" 
-                                    size="sm"
-                                    className="w-full justify-start"
-                                    onClick={() => router.get('/app-settings')}
-                                >
-                                    <Settings className="w-4 h-4 mr-2" />
-                                    Pengaturan Aplikasi
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </div>
+                    {/* Quick Actions */}
+                    {!isRunning && (
+                        <div className="grid md:grid-cols-3 gap-4">
+                            <Card className="border border-green-200 hover:shadow-md transition-shadow">
+                                <CardContent className="pt-6">
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full justify-start text-green-700 border-green-300 hover:bg-green-50"
+                                        onClick={() => router.get('/countdown/setup')}
+                                    >
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        Sesi Baru
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                            
+                            <Card className="border border-blue-200 hover:shadow-md transition-shadow">
+                                <CardContent className="pt-6">
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full justify-start text-blue-700 border-blue-300 hover:bg-blue-50"
+                                        onClick={() => router.get('/archive')}
+                                    >
+                                        <Archive className="w-4 h-4 mr-2" />
+                                        Lihat Arsip
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                            
+                            <Card className="border border-gray-200 hover:shadow-md transition-shadow">
+                                <CardContent className="pt-6">
+                                    <Button 
+                                        variant="outline" 
+                                        className="w-full justify-start text-gray-700 border-gray-300 hover:bg-gray-50"
+                                        onClick={() => router.get('/app-settings')}
+                                    >
+                                        <Settings className="w-4 h-4 mr-2" />
+                                        Pengaturan
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

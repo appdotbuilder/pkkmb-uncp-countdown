@@ -18,6 +18,20 @@ class CountdownTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_can_view_countdown_timer_page(): void
+    {
+        $response = $this->get('/countdown');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_can_view_countdown_setup_page(): void
+    {
+        $response = $this->get('/countdown/setup');
+
+        $response->assertStatus(200);
+    }
+
     public function test_can_create_countdown_session(): void
     {
         $response = $this->post('/countdown', [
@@ -25,7 +39,7 @@ class CountdownTest extends TestCase
             'duration_minutes' => 5,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertRedirect('/countdown');
         $this->assertDatabaseHas('countdown_sessions', [
             'participant_name' => 'John Doe',
             'duration_minutes' => 5,
@@ -52,7 +66,7 @@ class CountdownTest extends TestCase
             'overtime_seconds' => 0,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertRedirect('/countdown');
         $session->refresh();
         $this->assertEquals('completed', $session->status);
     }
@@ -66,7 +80,7 @@ class CountdownTest extends TestCase
             'overtime_seconds' => 120,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertRedirect('/countdown');
         $session->refresh();
         $this->assertEquals('overtime', $session->status);
         $this->assertEquals(120, $session->overtime_seconds);

@@ -12,7 +12,7 @@ use Inertia\Inertia;
 class CountdownController extends Controller
 {
     /**
-     * Display the countdown page with setup form.
+     * Display the countdown timer page.
      */
     public function index()
     {
@@ -21,6 +21,18 @@ class CountdownController extends Controller
         
         return Inertia::render('countdown/index', [
             'activeSession' => $activeSession,
+            'appSettings' => $appSettings,
+        ]);
+    }
+
+    /**
+     * Show the setup form for creating a new countdown session.
+     */
+    public function create()
+    {
+        $appSettings = AppSetting::first();
+        
+        return Inertia::render('countdown/setup', [
             'appSettings' => $appSettings,
         ]);
     }
@@ -43,12 +55,7 @@ class CountdownController extends Controller
             'started_at' => now(),
         ]);
 
-        $appSettings = AppSetting::first();
-
-        return Inertia::render('countdown/index', [
-            'activeSession' => $session,
-            'appSettings' => $appSettings,
-        ]);
+        return redirect()->route('countdown.index')->with('success', 'Countdown berhasil dimulai!');
     }
 
     /**
@@ -67,12 +74,7 @@ class CountdownController extends Controller
             'ended_at' => now(),
         ]);
 
-        $appSettings = AppSetting::first();
-
-        return Inertia::render('countdown/index', [
-            'activeSession' => null,
-            'appSettings' => $appSettings,
-        ]);
+        return redirect()->route('countdown.index')->with('success', 'Sesi countdown telah dihentikan.');
     }
 
 
