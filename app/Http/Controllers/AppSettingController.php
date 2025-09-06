@@ -16,7 +16,7 @@ class AppSettingController extends Controller
     {
         $settings = AppSetting::firstOrCreate([], [
             'app_title' => 'PKKMB UNCP 2025',
-            'university_name' => 'Universitas Nusa Cendana Kupang',
+            'university_name' => 'Universitas Cokroaminoto Palopo',
         ]);
 
         return Inertia::render('settings/app', [
@@ -31,7 +31,7 @@ class AppSettingController extends Controller
     {
         $settings = AppSetting::firstOrCreate([], [
             'app_title' => 'PKKMB UNCP 2025',
-            'university_name' => 'Universitas Nusa Cendana Kupang',
+            'university_name' => 'Universitas Cokroaminoto Palopo',
         ]);
 
         $settings->update($request->validated());

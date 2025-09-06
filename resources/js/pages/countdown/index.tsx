@@ -41,7 +41,7 @@ export default function CountdownIndex({ activeSession, appSettings }: Props) {
     const [isOvertime, setIsOvertime] = useState(false);
 
     const appTitle = appSettings?.app_title || 'PKKMB UNCP 2025';
-    const universityName = appSettings?.university_name || 'Universitas Nusa Cendana Kupang';
+    const universityName = appSettings?.university_name || 'Universitas Cokroaminoto Palopo';
 
     useEffect(() => {
         if (activeSession && activeSession.status === 'active') {

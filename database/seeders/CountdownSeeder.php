@@ -17,7 +17,7 @@ class CountdownSeeder extends Seeder
         // Create default app settings
         AppSetting::firstOrCreate([], [
             'app_title' => 'PKKMB UNCP 2025',
-            'university_name' => 'Universitas Nusa Cendana Kupang',
+            'university_name' => 'Universitas Cokroaminoto Palopo',
             'logo' => null,
         ]);
 

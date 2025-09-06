@@ -42,7 +42,7 @@ interface Props {
 }
 
 export default function CountdownArchive({ sessions, appSettings }: Props) {
-    const universityName = appSettings?.university_name || 'Universitas Nusa Cendana Kupang';
+    const universityName = appSettings?.university_name || 'Universitas Cokroaminoto Palopo';
 
     const formatTime = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);

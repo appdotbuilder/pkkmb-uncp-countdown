@@ -19,7 +19,7 @@ class AppSettingFactory extends Factory
         return [
             'logo' => null,
             'app_title' => 'PKKMB UNCP 2025',
-            'university_name' => 'Universitas Nusa Cendana Kupang',
+            'university_name' => 'Universitas Cokroaminoto Palopo',
         ];
     }
 }

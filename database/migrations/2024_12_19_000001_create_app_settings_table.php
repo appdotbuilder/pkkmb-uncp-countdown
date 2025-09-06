@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('logo')->nullable()->comment('Application logo path');
             $table->string('app_title')->default('PKKMB UNCP 2025')->comment('Application title');
-            $table->string('university_name')->default('Universitas Nusa Cendana Kupang')->comment('University name');
+            $table->string('university_name')->default('Universitas Cokroaminoto Palopo')->comment('University name - Universitas Cokroaminoto Palopo as default');
             $table->timestamps();
             
             $table->index('created_at');

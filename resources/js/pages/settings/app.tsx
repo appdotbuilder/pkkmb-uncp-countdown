@@ -114,7 +114,7 @@ export default function AppSettingsPage({ settings }: Props) {
                                 <Input
                                     id="university-name"
                                     type="text"
-                                    placeholder="Universitas Nusa Cendana Kupang"
+                                    placeholder="Universitas Cokroaminoto Palopo"
                                     value={universityName}
                                     onChange={(e) => setUniversityName(e.target.value)}
                                     className="text-lg"
@@ -162,7 +162,7 @@ export default function AppSettingsPage({ settings }: Props) {
                                                 {appTitle || 'Judul Aplikasi'}
                                             </h2>
                                             <p className="text-yellow-100">
-                                                {universityName || 'Nama Universitas'}
+                                                {universityName || 'Universitas Cokroaminoto Palopo'}
                                             </p>
                                         </div>
                                     </div>

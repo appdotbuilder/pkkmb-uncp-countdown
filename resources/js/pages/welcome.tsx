@@ -201,7 +201,7 @@ export default function Welcome() {
                                     </div>
                                     <div>
                                         <h3 className="text-2xl font-bold">PKKMB UNCP 2025</h3>
-                                        <p className="text-yellow-100">Universitas Nusa Cendana Kupang</p>
+                                        <p className="text-yellow-100">Universitas Cokroaminoto Palopo</p>
                                     </div>
                                 </div>
                             </div>
@@ -290,7 +290,7 @@ export default function Welcome() {
                     <div className="space-y-2">
                         <p className="text-lg font-medium">🎓 PKKMB UNCP 2025</p>
                         <p className="text-gray-400">
-                            Universitas Nusa Cendana Kupang - Sistem Countdown Presentasi
+                            Universitas Cokroaminoto Palopo - Sistem Countdown Presentasi
                         </p>
                         <p className="text-sm text-gray-500">
                             Dibuat dengan ❤️ untuk kesuksesan acara PKKMB
