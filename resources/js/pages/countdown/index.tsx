@@ -181,16 +181,16 @@ export default function CountdownIndex({ activeSession, appSettings }: Props) {
                                 {isRunning ? (
                                     <>
                                         <div className={`text-8xl font-mono font-bold ${getTimerColor()} transition-colors duration-300`}>
-                                            {isOvertime ? `+${formatTime(overtime)}` : formatTime(timeLeft)}
+                                            {isOvertime ? formatTime(0) : formatTime(timeLeft)}
                                         </div>
                                         
                                         {isOvertime && (
                                             <div className="bg-red-100 border border-red-300 rounded-lg p-4">
                                                 <div className="text-red-800 font-bold text-xl mb-2">
-                                                    ⚠️ WAKTU HABIS!
+                                                    🚫 WAKTU HABIS!
                                                 </div>
                                                 <div className="text-red-700">
-                                                    Overtime: {formatTime(overtime)}
+                                                    Kelebihan waktu: <span className="font-semibold">{formatTime(overtime)}</span>
                                                 </div>
                                             </div>
                                         )}
